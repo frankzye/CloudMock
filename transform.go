@@ -83,13 +83,20 @@ type Request struct {
 }
 
 func ExpressRule(mockRequests []*MockRequest, r *Request) string {
+	hostPath := fmt.Sprintf("%s%s", r.Host, r.Path)
+	var match bool
 	for _, mockRequest := range mockRequests {
-		match, _ := regexp.MatchString(mockRequest.HttpRequestUrl, fmt.Sprintf("%s%s", r.Host, r.Path))
+		if strings.HasPrefix(mockRequest.HttpRequestUrl, "~") {
+			match, _ = regexp.MatchString(mockRequest.HttpRequestUrl, hostPath)
+		} else {
+			match = mockRequest.HttpRequestUrl == hostPath
+		}
 		if match && r.Method == mockRequest.Method {
+			log.Println(hostPath)
 			switch mockRequest.Response.Type {
 			case "raw":
 				{
-					return fmt.Sprintf("%s", mockRequest.Response.Value)
+					return string(mockRequest.Response.Value)
 				}
 			default:
 				return "{}"
