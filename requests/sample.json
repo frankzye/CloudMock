@@ -1,6 +1,6 @@
 [
   {
-    "httpRequestUrl": ".+.com/aa.php",
+    "httpRequestUrl": "~.+.com/aa.php",
     "method": "GET",
     "expressions": [
       {

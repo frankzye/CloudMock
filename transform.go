@@ -87,7 +87,7 @@ func ExpressRule(mockRequests []*MockRequest, r *Request) string {
 	var match bool
 	for _, mockRequest := range mockRequests {
 		if strings.HasPrefix(mockRequest.HttpRequestUrl, "~") {
-			match, _ = regexp.MatchString(mockRequest.HttpRequestUrl, hostPath)
+			match, _ = regexp.MatchString(mockRequest.HttpRequestUrl[1:], hostPath)
 		} else {
 			match = mockRequest.HttpRequestUrl == hostPath
 		}
