@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"time"
 )
 
 //goland:noinspection GoUnhandledErrorResult
@@ -19,14 +18,31 @@ func transfer(destination io.WriteCloser, source io.ReadCloser) {
 	io.Copy(destination, source)
 }
 
+func NewTLSServer(handler http.Handler) *httptest.Server {
+	caCert, caKey, _ := LoadX509KeyPair("public.pem", "private.pem")
+
+	ts := httptest.NewUnstartedServer(handler)
+	ts.TLS = &tls.Config{
+		ClientAuth:         0,
+		InsecureSkipVerify: true,
+		GetCertificate: func(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
+			pemCert, pemKey := CreateCert([]string{info.ServerName}, caCert, caKey, 1)
+			cert, err := tls.X509KeyPair(pemCert, pemKey)
+			return &cert, err
+		},
+	}
+	ts.StartTLS()
+	return ts
+}
+
 func main() {
 	requests := ReadMapping()
 
-	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, ExpressRule(requests, &Request{
+		_, _ = fmt.Fprintln(w, ExpressRule(requests, &Request{
 			Host:   r.Host,
 			Path:   r.RequestURI,
 			Method: r.Method,
@@ -39,8 +55,7 @@ func main() {
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			localUrl, _ := url.Parse(ts.URL)
 			if r.Method == http.MethodConnect {
-
-				destConn, err := net.DialTimeout("tcp", localUrl.Host, 10*time.Second)
+				destConn, err := net.Dial("tcp", localUrl.Host)
 				w.WriteHeader(http.StatusOK)
 				hijacker, ok := w.(http.Hijacker)
 				if !ok {
