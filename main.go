@@ -20,10 +20,17 @@ func transfer(destination io.WriteCloser, source io.ReadCloser) {
 }
 
 func main() {
+	requests := ReadMapping()
+
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html")
+
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, r.Host)
+		fmt.Fprintln(w, ExpressRule(requests, &Request{
+			Host:   r.Host,
+			Path:   r.RequestURI,
+			Method: r.Method,
+		}))
 	}))
 	defer ts.Close()
 
