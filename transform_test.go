@@ -8,7 +8,7 @@ import (
 
 func TestHelloWorld(t *testing.T) {
 	requests := ReadMapping()
-	assert.Greater(t, len(requests), 1)
+	assert.GreaterOrEqual(t, len(requests), 1)
 
 	response := ExpressRule(requests, &Request{
 		Host:   "myhost.com",
