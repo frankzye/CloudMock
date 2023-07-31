@@ -1,0 +1,20 @@
+[
+  {
+    "httpRequestUrl": ".+.com/aa.php",
+    "method": "GET",
+    "expressions": [
+      {
+        "field": "",
+        "condition": "",
+        "value": ""
+      }
+    ],
+    "response": {
+      "type": "raw",
+      "value": {
+        "properties": {
+        }
+      }
+    }
+  }
+]
