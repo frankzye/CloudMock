@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"path/filepath"
 )
 
 //goland:noinspection GoUnhandledErrorResult
@@ -19,7 +20,7 @@ func transfer(destination io.WriteCloser, source io.ReadCloser) {
 }
 
 func NewTLSServer(handler http.Handler) *httptest.Server {
-	caCert, caKey, _ := LoadX509KeyPair("public.pem", "private.pem")
+	caCert, caKey, _ := LoadX509KeyPair(filepath.Join(GetRoot(), "public.pem"), filepath.Join(GetRoot(), "private.pem"))
 
 	ts := httptest.NewUnstartedServer(handler)
 	ts.TLS = &tls.Config{

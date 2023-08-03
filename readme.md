@@ -1,23 +1,26 @@
-## Features  
-1. api mock
-2. reverse proxy
-3. response transform
-4. az cli mock
+tf mock is a great tool help run terraform codes without cloud support.
 
-## TODO
+## Features  
+1. terraform provider requests mock
+2. az cli mock
+3. python modules integrate with tftest
+
+## Future 
 
 
 ## Install
+```pip
+pip install tfmock
+```
 
-### linux 
-````
-export https_proxy=http://127.0.0.1:9999
-cat public.pem >> /etc/pki/tls/certs/ca-bundle.crt
-update-ca-trust
-````
+don't forget trust the certificate if you are in windows or mac, find the certificate inside the tfmock-xx.egg-info bin folder
 
 ### windows
 ```
-set https_proxy=http://127.0.0.1:9999
 Import-Certificate -FilePath public.pem -CertStoreLocation "Cert:\CurrentUser\Root"
+```
+
+### macos
+```mac
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain public.pem
 ```

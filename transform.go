@@ -49,12 +49,16 @@ func ReadMapping() []*MockRequest {
 	return requests
 }
 
-func SaveRequest(request *Request) {
+func GetRoot() string {
 	root := os.Getenv("cloud_mock_root")
 	if root == "" {
 		root, _ = os.Getwd()
 	}
-	requestFolder := filepath.Join(root, "requests")
+	return root
+}
+
+func SaveRequest(request *Request) {
+	requestFolder := filepath.Join(GetRoot(), "requests")
 	mockRequest := &MockRequest{
 		HttpRequestUrl: fmt.Sprintf("%s%s", request.Host, request.Path),
 		Method:         request.Method,
